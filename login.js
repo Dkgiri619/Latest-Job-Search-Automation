@@ -6,7 +6,9 @@ const glassPass = "gokot47302@itwbuy.com"; //changeme
 const searchKeyword = "Software Developer Engineer"; //changeme
 const place = "India"; //changeme, a valid location 
 
-let jobsData1 = [];
+let count=0; //for the total count
+
+let jobsData1 = []; 
 
 //glassdoor platform
 (async function glassdoor(){
@@ -49,6 +51,7 @@ let jobsData1 = [];
         let newTab = await browser.newPage();
         await getJobData(allJobLinks[i], newTab);
     }
+    tab.close();
     await fs.promises.writeFile("jobs.json", JSON.stringify(jobsData1));
 })();
 
@@ -88,11 +91,12 @@ async function getJobData(link, tab){
         jobData["link"]=joblink;
     }
     jobsData1.push(jobData);
-    console.log(`--------------------------${jobData["company"]}---${jobData["designation"]}---------------`);
+    count++;
+    console.log(`[${count}]  ${jobData["company"]}  (${jobData["designation"]})    `);
     tab.close();
 }
 
-// indeed platform
+// indeed platform (faster data scrapping)
 (async function indeed(){
     let browser = await puppeteer.launch({
         headless: false,
@@ -124,6 +128,7 @@ async function getJobData(link, tab){
         let newTab = await browser.newPage();
         await getJobDataIndeed(newTab, allJobLinks[i]);
     }
+    tab.close();
 })();
 
 async function getJobDataIndeed(tab, link){
@@ -155,7 +160,8 @@ async function getJobDataIndeed(tab, link){
         let fLink = await tab.evaluate(function(ele){return ele.getAttribute("href")},linkTag);
         jobData["link"] = fLink;
     }else jobData["link"]=link;
-    console.log(`[+]  ${jobData["company"]}(${jobData["designation"]})    `);
+    count++;
+    console.log(`[${count}]  ${jobData["company"]}  (${jobData["designation"]})    `);
     jobsData1.push(jobData);
     tab.close();
 }
