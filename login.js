@@ -3,9 +3,12 @@ const puppeteer = require("puppeteer");
 // for glassdoor we need a valid id and pass first
 const glassID = "gokot47302@itwbuy.com"; // changeme
 const glassPass = "gokot47302@itwbuy.com"; //changeme
-const searchKeyword = "Software Developer Engineer"; //changeme
+const searchKeyword = "Software Engineer"; //changeme
 const place = "India"; //changeme, a valid location 
 
+
+// exported module converter
+const converter = require("./converter");
 let count=0; //for the total count
 
 let jobsData1 = []; 
@@ -46,13 +49,14 @@ let jobsData1 = [];
         oneLink= "https://www.glassdoor.co.in"+oneLink;
         allJobLinks.push(oneLink);
     }
-    //await getJobData(allJobLinks[3],browser);
     for(let i=0;i<allJobLinks.length;i++){
         let newTab = await browser.newPage();
         await getJobData(allJobLinks[i], newTab);
     }
     tab.close();
     await fs.promises.writeFile("jobs.json", JSON.stringify(jobsData1));
+    await converter(); //call the converter, it creates the final html file
+
 })();
 
 async function getJobData(link, tab){
@@ -76,7 +80,7 @@ async function getJobData(link, tab){
     const isSalaryPresent = await tab.$('.css-1v5elnn.e11nt52q2 .small')
     if(isSalaryPresent!=null){
         let price = await tab.evaluate(function(elem){return elem.textContent}, isSalaryPresent);
-        price = price.slice(0, price.length-17);
+        price = price.split('(')[0];
         jobData["salary"]=price;
     }else jobData["salary"]="not specified";
     // job link
@@ -122,8 +126,6 @@ async function getJobData(link, tab){
         oneLink = "https://in.indeed.com" + oneLink;
         allJobLinks.push(oneLink);
     }
-
-    console.log(allJobLinks.length);
     for(let i=0;i<allJobLinks.length;i++){
         let newTab = await browser.newPage();
         await getJobDataIndeed(newTab, allJobLinks[i]);
@@ -140,9 +142,15 @@ async function getJobDataIndeed(tab, link){
     let cName = await tab.evaluate(function(elem){return elem.textContent},cnameTag);
     jobData["company"]=cName;
     // location 
-    let allocTag  = await tab.$$(".jobsearch-JobInfoHeader-subtitle.jobsearch-DesktopStickyContainer-subtitle div");
-    let loc = await tab.evaluate(function(elem){return elem.textContent},allocTag[2]);
-    jobData["location"]=loc;
+    let allocTag  = await tab.$(".icl-u-lg-mr--sm.icl-u-xs-mr--xs a");
+    if(allocTag!=null){
+        let loc = await tab.evaluate(function(elem){return elem.textContent},allocTag);
+        jobData["location"]=loc;
+    }else {
+        let locTag = await tab.$$(".jobsearch-JobInfoHeader-subtitle.jobsearch-DesktopStickyContainer-subtitle div");
+        let loc = await tab.evaluate(function(elem){return elem.textContent}, locTag[locTag.length-2]);
+        jobData["location"]=loc;
+    }
     // salary
     const priceTag = await tab.$(".jobsearch-JobMetadataHeader-item  .icl-u-xs-mr--xs");
     if(priceTag!=null){
