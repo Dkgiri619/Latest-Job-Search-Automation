@@ -1,5 +1,7 @@
 const fs = require("fs");
 const puppeteer = require("puppeteer");
+
+
 // for glassdoor we need a valid id and pass first
 const glassID = "gokot47302@itwbuy.com"; // changeme
 const glassPass = "gokot47302@itwbuy.com"; //changeme
