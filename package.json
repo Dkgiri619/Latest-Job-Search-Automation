@@ -1,0 +1,26 @@
+{
+  "name": "H1",
+  "version": "1.0.0",
+  "description": "1. Latest jobs and faster job searching on **glassdoor** and **indeed**.\r 1. Specify the role and your preferred location and it will extract all the latest data.\r 1. It provides the role, salary expectations, location of the jobs where you could easily apply.\r 1. The automation will scrap valuable data and export it into an html so you could directly apply to your preference.\r 1. It will create a `jobs.json` file to use for further functionalities.",
+  "main": "converter.js",
+  "dependencies": {
+    "json2html": "^0.0.8",
+    "node-json2html": "^2.1.0",
+    "puppeteer": "^10.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dkgiri619/Latest-Job-Search-Automation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dkgiri619/Latest-Job-Search-Automation/issues"
+  },
+  "homepage": "https://github.com/Dkgiri619/Latest-Job-Search-Automation#readme"
+}
