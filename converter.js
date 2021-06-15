@@ -10,7 +10,7 @@ async function converter(){
         <td>${item.designation}</td>
         <td>${item.location}</td>
         <td>${item.salary}</td>
-        <td>${item.link}</td>
+        <td><button class="apply-button" onclick="location.href='${item.link}'" type="button">Apply</button></td>
     </tr>
     `;
     const createTable = (rows) => `
@@ -49,6 +49,9 @@ async function converter(){
             .no-content {
             background-color: red;
             }
+            .apply-button {
+                padding: 11px;
+            }
         </style>
         </head>
         <body>
@@ -66,19 +69,13 @@ async function converter(){
     };
 
     try {
-        /* Check if the file for `html` build exists in system or not */
         if (doesFileExist(buildPathHtml)) {
             console.log('Deleting old build file');
-            /* If the file exists delete the file from system */
             fs.unlinkSync(buildPathHtml);
         }
-        /* generate rows */
         const rows = data.map(createRow).join('');
-        /* generate table */
         const table = createTable(rows);
-        /* generate html */
         const html = createHtml(table);
-        /* write the generated html to file */
         fs.writeFileSync(buildPathHtml, html);
         console.log('Succesfully created an HTML table');
     } catch (error) {
